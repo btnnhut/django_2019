@@ -31,6 +31,8 @@
 
 	- #### [1.11 Dynamic sidebar - Django Web Development with Python P.11](#I_11)
 
+	- #### [1.12 Deploying Django to a server - Django Web Development with Python P.12](#I_12)
+
 
 
 <a name="00"></a>
@@ -791,4 +793,143 @@ Search google: [htmlcolorcodes.com](https://htmlcolorcodes.com/)
 
 - #### [1.11 Dynamic sidebar - Django Web Development with Python P.11](#I_11)
 
+	+ mysite -> main -> views.py
+
+	```python
+	from django.shortcuts import render, redirect
+	form django.http import HttpResponse
+	from .models import Tutorial, TutorialCategory, TutorialSeries
+	from django.contrib.auth.forms import AuthenticationForm
+	from django.contrib.auth import login, logout, authenticate
+	from django.contrib import messages
+	from .forms import NewUserForm
+	def single_slug(request, single_slug):
+		categories = [c.category_slug for c in TutorialCategory.objects.all()]
+		if single_slug in categories:
+			matching_series = TutorialSeries.object.filter(tutorial_category__category_slug=single_slug)
+			series_urls={}
+			for m in matching_series.all():
+				part_one = Tutorial.objects.filter(tutorial_series__tutorial_series=m.tutorial_series).earliest("tutorial_published")
+				series_urls[m]=part_one.tutorial_slug
+			return render(	request,
+							"main/category.html",
+							{"part_ones": series_urls})
+		tutorials = [t.tutorial_slug for t in Tutorial.objects.all()]
+		if single_slug in tutorials:
+			this_tutorial = Tutorial.objects.get(tutorial_slug = single_slug)
+			tutorial_from_series = Tutorial.objects.filter(tutorial_series__tutorial_series=this_tutorial.tutorial_series).order_by("tutorial_published")
+			this_tutorial_idx = list(tutorial_from_series).index(this_tutorial)
+			return render(	request,
+							"main/tutorial.html",
+							{"tutorial":this_tutorial,
+							"sidebar":tutorial_from_series,
+							"this_tutorial_idx":this_tutorial_idx})
+		return HttpResponse(f"{single_slug} does not correspond to anything.")
+	def homepage(request):
+		return render(	request=request,
+						template_name="main/categories.html",
+						context={"categories": TutorialCategory.objects.all()})
+	def register(request):
+		if request.method == "POST"
+			form = NewUserForm(request.POST)
+			if form.is_valid():
+				user = form.save()
+				username = form.cleaned_data.get('username')
+				message.success(request, f"New Account Create: {username}")
+				login(request, user)
+				messages.info(request, f"You are now logged in as {username}")
+				return redirect("main:homepage")
+			else:
+				for msg in form.error_messages:
+					message.error(request, f"{msg}: {form.error_messages[msg]}")
+		form = NewUserForm
+		return render(	request=request,
+						template_name="main/register.html",
+						context={"form":form})
+	def logout_request(request):
+		logout(request)
+		messages.info(request, "Logged out successfully !")
+		return redirect("main:homepage")
+	def login_request(request):
+		if request.method == "POST":
+			form = AuthenticationForm(request, data=request.POST)
+			if form.is_valid():
+				username = form.cleaned_data.get('username')
+				password = form.cleaned_data.get('password')
+				user = authenticate(username=username, password=password)
+				if user is not None:
+					login(request, user)
+					messages.info(request, f"Yout are now logged in as {username}")
+					return redirect("main:homepage")
+				else:
+					messages.error(request, "Invalid username or password")
+			else:
+				messages.error(request, "Invalid username or password")
+		form = AuthenticationForm()
+		return render(	request,
+						"main/login.html",
+						{"form":form})
+	```
+
+	+ mysite -> main -> templates -> main -> tutorial.html
+
+	```html
+	{% extends 'main/header.html' %}
+	{% block content %}
+		<div class="row">
+			<div class="col s12, m8, 18">
+				<h3>{{tutorial.tutorial_title}}</h3>
+				<p style="font-size:70%">Published {{tutorial.tutorial_published}}</p>
+				{{tutorial.tutorial_content|safe}}
+			</div>
+			<div class="col s12 m4 14">
+				<ul class="collapsible popout">
+					{% for tutorial in sidebar %}
+						{% if forloop.counter0 == this_tutorial_idx %}
+							<li class="active">
+								<div class="collapsible-header">
+								{{tutorial.tutorial_title}}<br>(currently viewing)</div>
+							</li>
+						{% else %}
+							<li>
+								<div class="collapsible-header">{{tutorial.tutorial_title}}</div>
+								<div class="collpasible-body">
+									<p><a href="/{{tutorial.tutorial_slug}}"><button class="btn waves-effect waves-light right-align" style="background-color:yellow;color: black>Go</button></a></p>
+								</div>
+							</li>
+						{% endif %}
+					{% endfor %}
+				<ul>
+			</div>
+		</div>
+	{% endblock %}
+	```
+
+	+ mysite -> main -> templates -> main -> header.html
+
+	```html
+	<head>
+		{% load static %}
+		<link href="{% static 'tinymce/css/prism.css' %}" rel="stylesheet">
+		<link rel="stylesheet" href="{% static 'main/css/materialize.css' %}">
+		<script src="https://cdnjs.cloudfare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+	</head
+	<body>
+		{% include "main/includes/navbar.html" %}
+		{% include "main/includes/messages.html" %}
+		<div class="container">
+			{% block content %}
+			{% endblock %}
+		</div>
+	</body>
+	<script src="{% static 'tinymce/js/prism.js' %}"></script>
+	<script>M.AutoInit();</script>
+	```
+
 **[Link tham khảo](https://www.youtube.com/watch?v=ZSzGIXYuE1I&list=PLQVvvaa0QuDe9nqlirjacLkBYdgc2inh3&index=11)**
+
+<a name="I_12"></a>
+
+- #### [1.12 Deploying Django to a server - Django Web Development with Python P.12](#I_12)
+
+**[Link tham khảo](https://www.youtube.com/watch?v=4FLb1ulb64o&list=PLQVvvaa0QuDe9nqlirjacLkBYdgc2inh3&index=12)**
