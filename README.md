@@ -137,6 +137,8 @@
 		]
 		```
 
+		> Chạy những lệnh sau để cập nhật những thay đổi ở models.py
+
 		> ```python
 		> python manage.py makemigrations
 		> ```
@@ -148,6 +150,27 @@
 		> ```python
 		> python manage.py migrate
 		> ```
+
+		+ Kiểm tra và thực hiện update thử:
+
+		> Vô Shell Django
+
+		```python
+		python manage.py shell
+		```
+
+		```python
+		from main.models import Tutorial
+		from django.utils import timezone
+
+		Tutorial.objects.all()
+		new_tutorial = Tutorial(tutorial_title="To be", tutorial_content="...or not to be", tutorial_published=timezone.now())
+		new_tutorial.save()
+		Tutorial.objects.all()
+
+		for t in Tutorial.objects.all():
+			print(t.tutorial_title)
+		```
 
 **[Link tham khảo](https://www.youtube.com/watch?v=aXxIjeGR6po&list=PLQVvvaa0QuDe9nqlirjacLkBYdgc2inh3&index=2)**
 
