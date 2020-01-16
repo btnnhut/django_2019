@@ -201,7 +201,7 @@
 
 	+ 1.3.2 Install TinyMCE
 
-		> Package này dùng để thêm chức năng cho content
+		> Package này dùng để thêm chức năng soạn thảo văn bản
 
 		```
 		pip install django-tinymce4-lite
@@ -210,6 +210,37 @@
 		* mysite -> mysite -> settings.py
 
 		```python
+		ALLOWED_HOSTS=[]
+
+		TINYMCE_DEFAULT_CONFIG = {
+			'height': 360,
+			'width': 1120,
+			'cleanup_on_startup': True,
+			'custom_undo_redo_levels': 20,
+			'selector': 'textarea',
+			'theme': 'modern',
+			'plugins':'''
+					textcolor save link image media preview codesample contextmenu
+					table code lists fullscreen insertdatetime nonbreaking
+					contextmenu directionality searchreplace wordcount visulblocks
+					virsualchars code fullscreen autolink lists charmap print hr
+					anchor pagebreak
+					''',
+			'toolbar1':'''
+					fullscreen preview bold italic underline | fontselect,
+					fontsizeselect | forecolor backcolor | alingleft alignright |
+					aligncenter alignjustify | indent outdent | bullist numlist table |
+					| link image media | code sample |
+					''',
+			'toolbar2':'''
+					visualblocks visualchars |
+					charmap hr pagebreak nonbreaking anchor | code |
+					''',
+			'contextmenu': 'formats | link image',
+			'menubar': True,
+			'statusbar': True,
+		}
+
 		INSTALLED_APPS = [
 			'django.contrib.admin',
 			'django.contrib.auth',
@@ -219,6 +250,19 @@
 			'django.contrib.staticfiles',
 			'main.apps.MainConfig',
 			'tinymce',
+		]
+		```
+
+		* mysite -> mysite -> urls.py
+
+		```python
+		from django.contrib import admin
+		from django.urls import path, include
+
+		urlpatterns = [
+			path('', include('main.urls')),
+			path('admin/', admin.site.urls),
+			path('tinymce/', include('tinymce.urls')),
 		]
 		```
 
