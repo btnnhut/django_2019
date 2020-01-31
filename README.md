@@ -326,8 +326,6 @@
 		<script src="{% static 'tinymce/js/prism.js'%}"></script>
 		```
 
-		22
-
 **[Link tham khảo](https://www.youtube.com/watch?v=j9elKTmCEhY&list=PLQVvvaa0QuDe9nqlirjacLkBYdgc2inh3&index=4)**
 
 <a name="I_05"></a>
